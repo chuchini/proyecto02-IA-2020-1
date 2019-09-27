@@ -20,7 +20,7 @@ class Tablero {
    * Constructor por default de un Tablero de 8x8 con tamaño de casilla 100px.
    */
   Tablero() {
-    this(8, 8, 100);
+    this(8, 8, 40);
   }
 
   /**
@@ -59,7 +59,7 @@ class Tablero {
    * @param mundo representa la configutación que será copiada para crear el nuevo Tablero
    */
   Tablero(int[][] mundo) {
-    this(mundo, 100);
+    this(mundo, 40);
   }
 
   /**
@@ -429,7 +429,7 @@ class Tablero {
   //cambia las fichas de diferente color deacuerdo a las reglas del juego
   
   void cambia(int a, int b,int player){
-      int x=a;
+    int x=a;
     int y=b;
     boolean camb=false;
     //cambia izquierda 
@@ -824,8 +824,8 @@ class Tablero {
     for (int i = 0; i < alto; i++) {
       for (int j = 0; j < ancho; j++) {
         // Dibujar las casillas del tablero:
-        fill(77, 132, 75);
-        stroke(255);
+        fill(63, 221, 24);
+        stroke(0);
         rect(j * tamano, i * tamano, tamano, tamano);
         // Dibujar los discos/fichas del tablero:
         if (mundo[i][j] == 1) {

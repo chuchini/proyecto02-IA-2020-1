@@ -3,7 +3,7 @@
  */
 int ancho = 8, 
   alto = 8, 
-  tamano = 90;
+  tamano = 60;
 boolean p1Turn = true;
 int playerCode;
 Tablero tablero; 
@@ -40,8 +40,10 @@ void draw() {
       } minimax = !minimax;
       System.out.println("Opción elegida por la computadora: (" + x + "," + y + "): " + valor);
       playerCode = 2;
-      if(valor==0) valor=-1; // Para que no se cicle.
-      else flanquear(y,x); // Se voltean las fichas.
+      if(valor==0) 
+        valor=-1; // Para que no se cicle.
+      else 
+        flanquear(y,x); // Se voltean las fichas.
     } 
  
   }
