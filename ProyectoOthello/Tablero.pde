@@ -3,7 +3,8 @@
  * La representación del tablero es mediante un arreglo bidimensional de enteros
  * que representan: 0 = casilla vacia, 1 = disco del jugador 1, 2 = disco del jugador 2.
  * @author  Rodrigo Colín
- * @version %I%, %G%
+ *
+ * Clase vista en laboratorio para la creacion del tablero.
  */
 class Tablero {
   int ancho;
@@ -80,7 +81,7 @@ class Tablero {
   /**
    * Cuenta la cantidad de discos/fichas de un determinado jugador en el Tablero.
    * @param  player identificador del jugador, es decir: 1 = Jugador 1, 2 = Jugador 2
-   * @return        cantidad de discos/fichas en el tablero del jugador dado como parámetro 
+   * @return cantidad de discos/fichas en el tablero del jugador dado como parámetro 
    */
   int count(int player) {
     int total = 0;

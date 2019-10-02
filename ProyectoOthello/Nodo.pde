@@ -1,49 +1,89 @@
 import java.util.List;
 
+/**
+* Clase encargada de representar los nodos que conforman un árbol.
+*/
 public class Nodo<T>{
     public Movimiento data;
-    public List<Nodo> children = new ArrayList<Nodo>();
-    public Nodo parent = null;
+    public List<Nodo> hijo = new ArrayList<Nodo>();
+    public Nodo padre = null;
 
+    /**
+    * Contructor de la clase Nodo.
+    * @param Movimiento data. La información sobre el tiro que contendrá el nodo.
+    */
     public Nodo(Movimiento data) {
         this.data = data;
     }
 
-    public void addChild(Nodo child) {
-        child.setParent(this);
-        this.children.add(child);
+    /**
+    * Método que sirve para agregar nodos hijo al árbol.
+    * @param Nodo hijo. el nodo hijo a agregar.
+    */
+    public void agregaHijo(Nodo hijo) {
+        hijo.setPadre(this);
+        this.hijo.add(hijo);
     }
 
-    public void addChild(Movimiento data) {
-        Nodo<Movimiento> newChild = new Nodo(data);
-        newChild.setParent(this);
-        children.add(newChild);
+    /**
+    * /**
+    * Método que sirve para agregar nodos hijo al árbol con información sobre los movimientos.
+    * @param Movimiento data. La información que contiene el nuevo hijo.
+    */
+    public void agregaHijo(Movimiento data) {
+        Nodo<Movimiento> hijoNuevo = new Nodo(data);
+        hijoNuevo.setPadre(this);
+        hijo.add(hijoNuevo);
     }
 
-    public void addChildren(List<Nodo> children) {
-        for(Nodo t : children) {
-            t.setParent(this);
+    /**
+    * Metodo para modificar los nodos al agregar un nuevo hijo.
+    * @param List<Nodos> hijo. Lista de nodos a modificar con el hijo.
+    */
+    public void agregaHijo(List<Nodo> hijo) {
+        for(Nodo t : hijo) {
+            t.setPadre(this);
         }
-        this.children.addAll(children);
+        this.hijo.addAll(hijo);
     }
 
-    public List<Nodo> getChildren() {
-        return children;
+    /**
+    * Método para obtener el hijo.
+    * @return hijo.
+    */
+    public List<Nodo> getHijo() {
+        return hijo;
     }
 
+    /**
+    * Método para obtener la información del movimiento.
+    * @return data. La información del movimiento.
+    */
     public Movimiento getData() {
         return data;
     }
 
+    /**
+    * Método para modificar la información del movimiento.
+    * @param data. La información del movimiento.
+    */
     public void setData(Movimiento data) {
         this.data = data;
     }
 
-    private void setParent(Nodo parent) {
-        this.parent = parent;
+    /**
+    * Método para modificar la información del padre.
+    * @param padre. El nodo padre.
+    */
+    private void setPadre(Nodo padre) {
+        this.padre = padre;
     }
 
-    public Nodo getParent() {
-        return parent;
+    /**
+    * Método para modificar la información del movimiento.
+    * @return padre. El nodo padre.
+    */
+    public Nodo getPadre() {
+        return padre;
     }
 }

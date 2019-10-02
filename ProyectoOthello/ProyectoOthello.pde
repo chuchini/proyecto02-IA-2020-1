@@ -1,30 +1,45 @@
 import java.util.Arrays;
 import java.util.Random;
 /**
- * Juego de Othello usando Processing
+ * Clase principal que representa la funcionalidad del Proyecto Othello,
+ * En la clase se encuentra la función MiniMax, la heurística implementada, así como el funcionamiento
+ * entre las clases para poder jugar Othello.
  */
 int ancho = 8, 
-  alto = 8, 
-  tamano = 64;
-boolean p1Turn = true;
-int playerCode;
-Tablero tablero;
-static final int JUGADOR1=1;
-static final int JUGADOR2=2;
-static final int SIN_FICHA=0;
-static final int PROFUNDIDAD = 10;
+    alto = 8, 
+    tamano = 64;
 
+boolean turnoJujador_1 = true; // Variable booleana que sirve para saver el turno del jugador, en un principio es turno del jugador 1.
+//int playerCode;
+Tablero tablero;
+static final int JUGADOR_1=1;
+static final int JUGADOR_2=2;
+static final int CASILLA_VACIA=0;
+// Como sabemos, la dificultad del juego dependerá de la profundidad del árbol, por lo que la dificultad del mismo depende
+// de esta variable.
+static final int PROFUNDIDAD = 10; // VARIABLE PARA CAMBIAR LA DIFICULTAD.
+
+/*
+* Clase interna privada para representar las casillas del tablero.
+*/
 private class Casilla{
     public int x;
     public int y;
     
+    /*
+    * Constructor de la clase Casilla
+    * @param int x, posicion x.
+    * @param int y, posicion y.
+    */
     public Casilla(int x, int y){
       this.x = x;
       this.y = y;
     }
 }
 
-// Inicial para establecer tamaño de ventana con variables
+
+
+// Configuración Inicial para establecer tamaño de ventana con variables
 void settings() {
   size((ancho * tamano)+1, (alto * tamano)+1);
 }
@@ -35,13 +50,12 @@ void setup() {
   background(0, 153, 51); // Color de fondo
 }
 
-// Update. Continuamente ejecuta y dibuja el código contenido en él
+// Update. Muestra en pantalla de manera continua el tablero y los cambios que ocurren sobre el mismo.
 void draw() {
   tablero.display();
 }
 
-//Metodo que hace una copia por valor de un arreglo
-
+//Método que hace una copia por valor de un arreglo
 public static int[][] cloneArray(int[][] src) {
     int length = src.length;
     int[][] target = new int[length][src[0].length];
@@ -53,34 +67,35 @@ public static int[][] cloneArray(int[][] src) {
 
 //Método que devuelve un booleano que representa al turno del jugador contrincante. 
 boolean getContrincante(){
-  if (p1Turn)
+  if (turnoJujador_1)
     return false;
   else
     return true;
 }
 
-//Metodo que devuelve el valor entero del jugador contrincante.
+//Método que devuelve el valor entero del jugador contrincante.
 int getIntContrincante(int turno){
-  if (turno == JUGADOR1)
-    return JUGADOR2;
+  if (turno == JUGADOR_1)
+    return JUGADOR_2;
   else
-    return JUGADOR1;
+    return JUGADOR_1;
 }
-//Metodo que devuelve el valor entero del jugador actual.
+
+//Método que devuelve el valor entero del jugador actual.
 int jugadorActual(){
-  if (p1Turn)
-    return JUGADOR1;
+  if (turnoJujador_1)
+    return JUGADOR_1;
   else
-    return JUGADOR2;
+    return JUGADOR_2;
 }
 
 //Método que intercambia el jugador actual por el contrincante.
 void intercambiaJugador(){
-  p1Turn = getContrincante();
+  turnoJujador_1 = getContrincante();
 }
 
 /** 
- * Método que verifica si a la derecha del tiro hay posibilidad de flanquear.
+ * Método que verifica si a la derecha del tiro hay un movimiento permitido.
  * itera sobre lo que está al Éste (Derecha) de la casilla.
  * @param c Las casillas a cambiar.
  * @param x Posición del tiro en x
@@ -90,7 +105,7 @@ public ArrayList<Casilla> verificaE(ArrayList<Casilla> c, int x, int y,int[][] m
   int contrincante = getIntContrincante(turno);
   ArrayList<Casilla> auxCasillas = new ArrayList<Casilla>();//Casillas locales a cambiar.
   for(int i=x+1; i<ancho;i++){
-    if(mundo[y][i] == SIN_FICHA) //Si no hay ficha ya no seguimos revisando. No es válido
+    if(mundo[y][i] == CASILLA_VACIA) //Si no hay ficha ya no seguimos revisando. No es válido
       break;
     if(mundo[y][i]==contrincante){ //Si la ficha es del contrincante, guarda la posición
       auxCasillas.add(new Casilla(i,y));
@@ -104,7 +119,7 @@ public ArrayList<Casilla> verificaE(ArrayList<Casilla> c, int x, int y,int[][] m
 }
 
 /**
- * Método que verifica si hay posibilidad de flanquear.
+ * Método que verifica si hay un movimiento permitido.
  * Ítera sobre lo que está al noreste (sobre la diagonal derecha de arriba).
  * @param c Las casillas a cambiar.
  * @param x Posición del tiro en x
@@ -114,7 +129,7 @@ public ArrayList<Casilla> verificaNE(ArrayList<Casilla> c, int x, int y,int[][] 
   int contrincante = getIntContrincante(turno);
   ArrayList<Casilla> auxCasillas = new ArrayList<Casilla>();//Casillas locales a cambiar.
   for(int i = x+1, j = y-1; i<ancho && j>=0; i++,j--){
-      if(mundo[j][i] == SIN_FICHA) //Si no hay ficha ya no seguimos revisando. No es válido
+      if(mundo[j][i] == CASILLA_VACIA) //Si no hay ficha ya no seguimos revisando. No es válido
         break;
       if(mundo[j][i]==contrincante){ //Si la ficha es del contrincante, guarda la posición
         auxCasillas.add(new Casilla(i,j));
@@ -128,7 +143,7 @@ public ArrayList<Casilla> verificaNE(ArrayList<Casilla> c, int x, int y,int[][] 
 }
 
 /**
- * Método que verifica si hay posibilidad de flanquear.
+ * Método que verifica si hay un movimiento permitido.
  * Ítera sobre la vertical hacía arriba (Al norte).
  * @param c Las casillas a cambiar.
  * @param x Posición del tiro en x
@@ -138,7 +153,7 @@ public ArrayList<Casilla> verificaN(ArrayList<Casilla> c, int x, int y,int[][] m
   int contrincante = getIntContrincante(turno);
   ArrayList<Casilla> auxCasillas = new ArrayList<Casilla>();//Casillas locales a cambiar.
   for(int j=y-1; j>=0;j--){
-    if(mundo[j][x] == SIN_FICHA) //Si no hay ficha ya no seguimos revisando. No es válido
+    if(mundo[j][x] == CASILLA_VACIA) //Si no hay ficha ya no seguimos revisando. No es válido
       break;
     if(mundo[j][x]==contrincante){ //Si la ficha es del contrincante, guarda la posición
       auxCasillas.add(new Casilla(x,j));
@@ -152,7 +167,7 @@ public ArrayList<Casilla> verificaN(ArrayList<Casilla> c, int x, int y,int[][] m
 }
 
 /**
- * Método que verifica si hay posibilidad de flanquear.
+ * Método que verifica si hay un movimiento permitido.
  * Ítera sobre lo que está al noroeste (La diagonal izquierda de arriba).
  * @param c Las casillas a cambiar.
  * @param x Posición del tiro en x
@@ -162,7 +177,7 @@ public ArrayList<Casilla> verificaNO(ArrayList<Casilla> c, int x, int y,int[][] 
   int contrincante = getIntContrincante(turno);
   ArrayList<Casilla> auxCasillas = new ArrayList<Casilla>();//Casillas locales a cambiar.
   for(int i = x-1, j = y-1; i>=0 && j>=0; i--,j--){
-    if(mundo[j][i] == SIN_FICHA) //Si no hay ficha ya no seguimos revisando. No es válido
+    if(mundo[j][i] == CASILLA_VACIA) //Si no hay ficha ya no seguimos revisando. No es válido
       break;
     if(mundo[j][i]==contrincante){ //Si la ficha es del contrincante, guarda la posición
       auxCasillas.add(new Casilla(i,j));
@@ -176,7 +191,7 @@ public ArrayList<Casilla> verificaNO(ArrayList<Casilla> c, int x, int y,int[][] 
 }
 
 /**
- * Método que verifica si hay posibilidad de flanquear.
+ * Método que verifica si hay un movimiento permitido.
  * Ítera sobre lo que está al oeste (A la izquierda de la ficha).
  * @param c Las casillas a cambiar.
  * @param x Posición del tiro en x
@@ -186,7 +201,7 @@ public ArrayList<Casilla> verificaO(ArrayList<Casilla> c, int x, int y,int[][] m
   int contrincante = getIntContrincante(turno);
   ArrayList<Casilla> auxCasillas = new ArrayList<Casilla>();//Casillas locales a cambiar.
   for(int i=x-1; i>=0;i--){
-    if(mundo[y][i] == SIN_FICHA) //Si no hay ficha ya no seguimos revisando. No es válido
+    if(mundo[y][i] == CASILLA_VACIA) //Si no hay ficha ya no seguimos revisando. No es válido
       break;
     if(mundo[y][i]==contrincante){ //Si la ficha es del contrincante, guarda la posición
       auxCasillas.add(new Casilla(i,y));
@@ -200,7 +215,7 @@ public ArrayList<Casilla> verificaO(ArrayList<Casilla> c, int x, int y,int[][] m
 }
 
 /**
- * Método que verifica si hay posibilidad de flanquear.
+ * Método que verifica si hay un movimiento permitido.
  * Ítera sobre lo que hay al suroeste (la diagonal izquierda de abajo)
  * @param c Las casillas a cambiar.
  * @param x Posición del tiro en x
@@ -210,7 +225,7 @@ public ArrayList<Casilla> verificaSO(ArrayList<Casilla> c, int x, int y,int[][] 
   int contrincante = getIntContrincante(turno);
   ArrayList<Casilla> auxCasillas = new ArrayList<Casilla>();//Casillas locales a cambiar.
   for(int i = x-1, j = y+1; i>=0 && j<alto; i--,j++){
-    if(mundo[j][i] == SIN_FICHA) //Si no hay ficha ya no seguimos revisando. No es válido
+    if(mundo[j][i] == CASILLA_VACIA) //Si no hay ficha ya no seguimos revisando. No es válido
       break;
     if(mundo[j][i]==contrincante){ //Si la ficha es del contrincante, guarda la posición
       auxCasillas.add(new Casilla(i,j));
@@ -224,7 +239,7 @@ public ArrayList<Casilla> verificaSO(ArrayList<Casilla> c, int x, int y,int[][] 
 }
 
 /**
- * Método que verifica si hay posibilidad de flanquear.
+ * Método que verifica si hay un movimiento permitido.
  * Ítera hacía el sur (sobre la vertical hacía abajo).
  * @param c Las casillas a cambiar.
  * @param x Posición del tiro en x
@@ -234,7 +249,7 @@ public ArrayList<Casilla> verificaS(ArrayList<Casilla> c, int x, int y,int[][] m
   int contrincante = getIntContrincante(turno);
   ArrayList<Casilla> auxCasillas = new ArrayList<Casilla>();//Casillas locales a cambiar.
   for(int j=y+1; j<alto;j++){
-    if(mundo[j][x] == SIN_FICHA) //Si no hay ficha ya no seguimos revisando. No es válido
+    if(mundo[j][x] == CASILLA_VACIA) //Si no hay ficha ya no seguimos revisando. No es válido
       break;
     if(mundo[j][x]==contrincante){ //Si la ficha es del contrincante, guarda la posición
       auxCasillas.add(new Casilla(x,j));
@@ -248,7 +263,7 @@ public ArrayList<Casilla> verificaS(ArrayList<Casilla> c, int x, int y,int[][] m
 }
 
 /**
- * Método que verifica si hay posibilidad de flanquear.
+ * Método que verifica si hay un movimiento permitido.
  * Ítera hacía el sureste (diagonal de abajo a la derecha)
  * @param c Las casillas a cambiar.
  * @param x Posición del tiro en x
@@ -258,7 +273,7 @@ public ArrayList<Casilla> verificaSE(ArrayList<Casilla> c, int x, int y, int[][]
   int contrincante = getIntContrincante(turno);
   ArrayList<Casilla> auxCasillas = new ArrayList<Casilla>();//Casillas locales a cambiar.
   for(int i = x+1, j = y+1; i<ancho && j<alto; i++,j++){
-    if(mundo[j][i] == SIN_FICHA) //Si no hay ficha ya no seguimos revisando. No es válido
+    if(mundo[j][i] == CASILLA_VACIA) //Si no hay ficha ya no seguimos revisando. No es válido
       break;
     if(mundo[j][i]==contrincante){ //Si la ficha es del contrincante, guarda la posición
       auxCasillas.add(new Casilla(i,j));
@@ -272,7 +287,7 @@ public ArrayList<Casilla> verificaSE(ArrayList<Casilla> c, int x, int y, int[][]
 }
 
 
-
+// Cambia las casillas necesarias.
 public ArrayList<Casilla> casillasACambiar(int x, int y, int[][] mundo, int turno){
   ArrayList<Casilla> casillasACambiar = new ArrayList<Casilla>();//Total de casillas a cambiar
   casillasACambiar.addAll(verificaE(casillasACambiar,x,y,mundo,turno));
@@ -299,10 +314,10 @@ boolean tiroValido(ArrayList<Casilla> casillasACambiar){
 int[][] flip(ArrayList<Casilla> casillas, int[][] mundo, int turno){
   if(casillas.size()!=0)
     for(Casilla c: casillas)
-      if(turno == JUGADOR1){
-        mundo[c.y][c.x] = JUGADOR1;
+      if(turno == JUGADOR_1){
+        mundo[c.y][c.x] = JUGADOR_1;
       }else{
-        mundo[c.y][c.x] = JUGADOR2;
+        mundo[c.y][c.x] = JUGADOR_2;
       }
   return mundo;
 }
@@ -315,10 +330,10 @@ int[][] flipPorCopia(ArrayList<Casilla> casillas, int[][] mundo, int turno){
   int[][] nuevoMundo = cloneArray(mundo);
   if(casillas.size()!=0)
     for(Casilla c: casillas)
-      if(turno == JUGADOR1){
-        nuevoMundo[c.y][c.x] = JUGADOR1;
+      if(turno == JUGADOR_1){
+        nuevoMundo[c.y][c.x] = JUGADOR_1;
       }else{
-        nuevoMundo[c.y][c.x] = JUGADOR2;
+        nuevoMundo[c.y][c.x] = JUGADOR_2;
       }
   return nuevoMundo;
 }
@@ -343,25 +358,25 @@ public ArrayList<Movimiento> generaPosiblesMovimientos(int [][] mundo, int turno
   return configuraciones;
 }
 
-//Funcion Minimax.
-public int minimax(Nodo raiz, int depth, boolean maximizaJugador){
-  if(depth == 0 || (raiz.getChildren().isEmpty() && raiz.getParent() != null)){
+//Funcion MiniMax principal. Se basa en el algoritmo MiniMax tradicional.
+public int minimax(Nodo raiz, int profundidad, boolean maximizaJugador){
+  if(profundidad == 0 || (raiz.getHijo().isEmpty() && raiz.getPadre() != null)){
     return heuristica(raiz);
   }
   if (maximizaJugador){
     int mejorValor = Integer.MIN_VALUE;
-    construyeArbolAux(raiz, JUGADOR2);
-    for(Nodo n: (List<Nodo>)raiz.getChildren()){
-      int v = minimax(n, depth-1, false);
+    construyeArbolAux(raiz, JUGADOR_2);
+    for(Nodo n: (List<Nodo>)raiz.getHijo()){
+      int v = minimax(n, profundidad-1, false);
       n.getData().valor = v;
       mejorValor = Math.max(mejorValor, v);
     }
     return mejorValor;
   }else{
     int mejorValor = Integer.MAX_VALUE;
-    construyeArbolAux(raiz, JUGADOR1);
-    for(Nodo n: (List<Nodo>)raiz.getChildren()){
-      int v = minimax(n, depth-1, true);
+    construyeArbolAux(raiz, JUGADOR_1);
+    for(Nodo n: (List<Nodo>)raiz.getHijo()){
+      int v = minimax(n, profundidad-1, true);
       n.getData().valor = v;
       mejorValor = Math.min(mejorValor, v);
     }
@@ -369,48 +384,56 @@ public int minimax(Nodo raiz, int depth, boolean maximizaJugador){
   }
 }
 
+/*
+* Heuristica utilizada.
+* Para la toma de decisiones, el agente obtiene información del entorno, aplica
+* dicha heuristica sobre los posibles escenarios y los califica para saber cual tomar.
+*/
 public int heuristica(Nodo hoja){
   Movimiento mundoPosible = (Movimiento) hoja.getData();
-  int evaluacion = mundoPosible.count(JUGADOR2);
+  int evaluacion = mundoPosible.count(JUGADOR_2);
   int bonus = 1;
   
-  if (mundoPosible.mundo[0][0] == JUGADOR2) {
+  if (mundoPosible.mundo[0][0] == JUGADOR_2) {
         
    }
-  if (mundoPosible.mundo[0][ancho - 1] == JUGADOR2) {
+  if (mundoPosible.mundo[0][ancho - 1] == JUGADOR_2) {
         evaluacion += bonus;
    }
-   if (mundoPosible.mundo[alto - 1][0]== JUGADOR2) {
+   if (mundoPosible.mundo[alto - 1][0]== JUGADOR_2) {
         evaluacion += bonus;
    }
-   if (mundoPosible.mundo[alto - 1][ancho - 1]== JUGADOR2) {
+   if (mundoPosible.mundo[alto - 1][ancho - 1]== JUGADOR_2) {
         evaluacion += bonus;
    }
    return evaluacion;
 }
 
+// Se utiliza un valor aleatorio.
 public int heuristicaRandom(Nodo hoja){
   Random random = new Random();
   return random.nextInt(64);
 }
 
+// Método para construir el arbol con base la informacion de los movimientos.
 public void construyeArbolAux(Nodo raiz, int turno){
   Movimiento c = (Movimiento)raiz.getData();
   int [][] mundoInterno = c.mundo;
   ArrayList<Movimiento> configuraciones = generaPosiblesMovimientos(mundoInterno, turno);
   for(Movimiento conf: configuraciones){
     Nodo hijo = new Nodo(conf);
-    raiz.addChild(hijo);
+    raiz.agregaHijo(hijo);
   }
 }
 
+// Regresa el movimiento.
 public Movimiento getMovimiento(){
   int valorMinimaxActual;
   Movimiento actual = new Movimiento(tablero.mundo);
   Nodo<Movimiento> raiz = new Nodo(actual);
   valorMinimaxActual = minimax(raiz, PROFUNDIDAD, true);
   println("El valor de minimax fue: " + valorMinimaxActual);
-  for(Nodo t: raiz.getChildren()){
+  for(Nodo t: raiz.getHijo()){
     if (valorMinimaxActual == ((Movimiento)t.getData()).valor){
       return (Movimiento)t.getData();
     }
@@ -423,13 +446,14 @@ public void determinaGanador(){
   int puntajeJugador1 = tablero.count(1);
   int puntajeJugador2 = tablero.count(2);
   println("Puntajes: ");
-  println("Jugador1: " + puntajeJugador1);
+  println("JUGADOR_1: " + puntajeJugador1);
   println("Inteligencia Artificial : " + puntajeJugador2);
   if (puntajeJugador1 > puntajeJugador2) println("Jugador 1 ha ganado el juego"); 
   if (puntajeJugador2 > puntajeJugador1) println("La Inteligencia Artificial ha ganado el juego");
   if (puntajeJugador1 == puntajeJugador2) println("El juego termino en empate");
 }
 
+// Función utilizada para determinar si el juego acabo.
 public boolean juegoAcabo(){
   boolean bandera = false;
   boolean tiro1 = false;
